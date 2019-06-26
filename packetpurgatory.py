@@ -73,9 +73,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
     parser.add_argument("-u", "--apikey", help="Firewall API Key", required=True)
-    parser.add_argument("-u", "--lfpQuarantine", help="Log Forwarding Profile name", type=str)
-    parser.add_argument("-u", "--asProfile", help="Anti-Spyware Profile name", type=str)
-    parser.add_argument("-u", "--dag", help="Dynamic Address Group name", type=str)
+    parser.add_argument("-u", "--log_forwarding", help="Log Forwarding Profile name", type=str)
+    parser.add_argument("-u", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
+    parser.add_argument("-u", "--DAG", help="Dynamic Address Group name", type=str)
     args = parser.parse_args()
 
     if len(sys.argv) < 2:
