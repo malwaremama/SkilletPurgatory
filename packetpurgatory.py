@@ -66,23 +66,23 @@ def create_lfp_profile (fwHost, apiKey, lfProfile):
             status = "Commit status - " + " " + str(tree[0][0][12].text) + "% complete"
             print ('{0}\r'.format(status)),
 
-def main():
+def main(fwHost, apiKey, lfProfile, asProfile, dag):
 
     # python skillets currently use CLI arguments to get input from the operator / user. Each argparse argument long
     # name must match a variable in the .meta-cnc file directly
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Get meta-cnc Params')
     parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
     parser.add_argument("-u", "--apikey", help="Firewall API Key", required=True)
-    parser.add_argument("-u", "--log_forwarding", help="Log Forwarding Profile name", type=str)
-    parser.add_argument("-u", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
-    parser.add_argument("-u", "--DAG", help="Dynamic Address Group name", type=str)
-    args = parser.parse_args()
-
+    parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
+    parser.add_argument("-p", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
+    parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
+    
     if len(sys.argv) < 2:
         parser.print_help()
         parser.exit()
         exit(1)
-
+        
+    args = parser.parse_args()
     fwHost = args.firewall
     apiKey = args.apikey
     lfProfile = args.log_forwarding
@@ -91,4 +91,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(fwHost, apiKey, lfProfile, asProfile, dag)
