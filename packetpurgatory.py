@@ -24,7 +24,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
 
-def create_lfp_profile (fwHost, apiKey)
+def create_lfp_profile (fwHost, apiKey):
     log_settings_xpath = '/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles'
     element = '<entry name = '{lf_profile}/'>'.format(lf_profile=lfProfile)
     element += '<match-list><entry name = 'Quarantine'/></match-list>'
