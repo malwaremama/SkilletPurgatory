@@ -94,7 +94,7 @@ def main():
     parser.add_argument("-u", "--username", help="Firewall API Key", required=True)
     parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
     parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
-    parser.add_argument("-p", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
+    parser.add_argument("-a", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
     parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
     args = parser.parse_args()
     
