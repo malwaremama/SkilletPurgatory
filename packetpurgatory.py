@@ -66,7 +66,7 @@ def create_lfp_profile (fwHost, apiKey, lfProfile):
             status = "Commit status - " + " " + str(tree[0][0][12].text) + "% complete"
             print ('{0}\r'.format(status)),
 
-def main(fwHost, apiKey, lfProfile, asProfile, dag):
+def main():
 
     # python skillets currently use CLI arguments to get input from the operator / user. Each argparse argument long
     # name must match a variable in the .meta-cnc file directly
@@ -91,4 +91,4 @@ def main(fwHost, apiKey, lfProfile, asProfile, dag):
 
 
 if __name__ == '__main__':
-    main(fwHost, apiKey, lfProfile, asProfile, dag)
+    main()
