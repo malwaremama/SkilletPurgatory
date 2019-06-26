@@ -76,13 +76,13 @@ def main():
     parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
     parser.add_argument("-p", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
     parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
+    args = parser.parse_args()
     
     if len(sys.argv) < 2:
         parser.print_help()
         parser.exit()
         exit(1)
         
-    args = parser.parse_args()
     fwHost = args.firewall
     apiKey = args.apikey
     lfProfile = args.log_forwarding
