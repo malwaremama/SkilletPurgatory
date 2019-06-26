@@ -24,21 +24,21 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
 
-def create_lfp_profile (fwHost, apiKey):
-    log_settings_xpath = '/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles'
-    element = '<entry name = '{lf_profile}/'>'.format(lf_profile=lfProfile)
-    element += '<match-list><entry name = 'Quarantine'/></match-list>'
-    element += '<actions><entry name = 'AddQuarantineTag'/></actions>'
-    element += '<tags><member>quarantine</member></tags>'
-    element += '<target>source-address</target>'
-    element += '<action>add-tag></action>
-    element += '<log-type>threat</log-type>
-    element += '<filter>(action eq sinkhole></filter>
-    element += '<send-to-panorama>yes</send-to-panorama>'
+def create_lfp_profile (fwHost, apiKey, lfProfile):
+    log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
+    element = "<entry name = '{lf_profile}'/>".format(lf_profile=lfProfile)
+    element += "<match-list><entry name = 'Quarantine'/></match-list>"
+    element += "<actions><entry name = 'AddQuarantineTag'/></actions>"
+    element += "<tags><member>quarantine</member></tags>"
+    element += "<target>source-address</target>"
+    element += "<action>add-tag></action>"
+    element += "<log-type>threat</log-type>"
+    element += "<filter>(action eq sinkhole></filter>"
+    element += "<send-to-panorama>yes</send-to-panorama>"
     values = {'type': 'config','action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://{host}'/api/'.format(host=fwHost)
+    palocall = 'https://{host}/api/'.format(host=fwHost)
     lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp.text)
+    tree = ET.fromstring(lfp_create_r.text)
     print("Creating Log Forwarding Profile")
 
 
