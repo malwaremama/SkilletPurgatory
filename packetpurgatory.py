@@ -19,7 +19,6 @@ Author: Sandy Wenzel <swenzel@paloaltonetworks.com>
 
 import argparse
 import sys
-import logging
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -27,37 +26,38 @@ import xml.etree.ElementTree as ET
 
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
-    type = "config"
-    action = "set"
     
     log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
     element = "<entry name='{lf_profile}'/>".format(lf_profile=lfProfile)
-    palocall = 'https://{host}/api/'.format(host=fwHost, type, action, log_settings_xpath, element, apiKey)
-    lfp_create_r = requests.post(palocall, verify=False)
+    values = {'type': 'config', 'action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://{host}/api/'.format(host=fwHost)
+    lfp_create_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(lfp_create_r.text)
-    
     
     match_list_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{lf_profile}']/match-list".format(lf_profile=lfProfile)
     element += "<entry name='Quarantine'/></match-list>"
     element += "<log-type>threat</log-type>"
     element += "<filter>(action+eq+sinkhole></filter>"
     element += "<send-to-panorama>yes</send-to-panorama>"
-    palocall = 'https://{host}/api/'.format(host=fwHost, type, action, match_list_xpath, element, apiKey)
-    match_list_r = requests.post(palocall, verify=False)
+    values = {'type': 'config', 'action': 'set', 'xpath': match_list_xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://{host}/api/'.format(host=fwHost)
+    match_list_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(match_list_r.text)
     
     actions_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{lf_profile)']/match-list/entry[@name='Quarantine']/actions".format(lf_profile=lfProfile)
     element += "<entry name='AddQuarantineTag'/>"
-    palocall = 'https://{host}/api/'.format(host=fwHost, type, action, actions_xpath, element, apiKey)
-    actions_r = requests.post(palocall, verify=False)
+    values = {'type': 'config', 'action': 'set', 'xpath': actions_xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://{host}/api/'.format(host=fwHost)
+    actions_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(actions_r.text)
     
     tags_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{lf_profile}']/match-list/entry[@name='Quarantine']/actions/entry[@name='AddQuarantineTag']/type/tagging".format(lf_profile=lfProfile)
     element += "<tags><member>quarantine</tags></member>"
     element += "<target>source-address</target>"
     element += "<action>add-tag></action>"
-    palocall = 'https://{host}/api/'.format(host=fwHost, type, action, tags_xpath, element, apiKey)
-    tag_create_r = requests.post(palocall, verify=False)
+    values = {'type': 'config', 'action': 'set', 'xpath': tags_xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://{host}/api/'.format(host=fwHost)
+    tag_create_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(tag_create_r.text)
 
 
