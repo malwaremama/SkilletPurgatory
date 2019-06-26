@@ -65,9 +65,6 @@ def create_lfp_profile (fwHost, apiKey, lfProfile):
         else:
             status = "Commit status - " + " " + str(tree[0][0][12].text) + "% complete"
             print ('{0}\r'.format(status)),
-else:
-print ("The changes have been made to the candidate configuration, but have not been committed.")
-
 
 def main():
 
