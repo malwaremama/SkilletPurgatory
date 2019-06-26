@@ -91,7 +91,8 @@ def main():
     # name must match a variable in the .meta-cnc file directly
     parser = argparse.ArgumentParser(description='Get meta-cnc Params')
     parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
-    parser.add_argument("-u", "--apikey", help="Firewall API Key", required=True)
+    parser.add_argument("-u", "--username", help="Firewall API Key", required=True)
+    parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
     parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
     parser.add_argument("-p", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
     parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
@@ -103,7 +104,8 @@ def main():
         exit(1)
         
     fwHost = args.firewall
-    apiKey = args.apikey
+    username = args.username
+    password = args.password
     lfProfile = args.log_forwarding
     asProfile = args.AS_Profile
     dag = args.DAG
