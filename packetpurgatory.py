@@ -157,7 +157,7 @@ else:
     jobid = tree[0][1].text
     print("Committing Policy (JobID): " + str(jobid))
       
-print(r""/ Now go forth and create havoc on your Windows Victim!!
+print(r'''\ Now go forth and create havoc on your Windows Victim!!
                         _________-----_____
        _____------           __      ----_
 ___----             ___------              \
@@ -174,4 +174,4 @@ ___----             ___------              \
                                   |  \_((_(_)|/(_)
                                   \             (
                                    \_____________)
-                                         "")
+                                         ''')
