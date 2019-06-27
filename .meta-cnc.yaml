@@ -37,9 +37,11 @@ variables:
   - name: password
     description: NGFW Password
     type_hint: The password to the NGFW
+  - name: allowall
+    description: Security rule that allows outbound traffic
+    default: allow all
   - name: AS_Profile
     description: Name of the existing Anti-Spyware security profile where the DNS Sinkhole feature is configured.
-    default: strict
     type_hint: text
   - name: log_forwarding
     description: Name of the Log Forwarding Profile to autotag infected hosts
