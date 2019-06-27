@@ -24,8 +24,25 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
+#Arguments passed from user input from meta-cnc file
+parser = argparse.ArgumentParser(description='Get meta-cnc Params')
+parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
+parser.add_argument("-u", "--username", help="Firewall API Key", required=True)
+parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
+parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
+parser.add_argument("-a", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
+parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
+args = parser.parse_args()
+      
+fwHost = args.firewall
+uName = args.username
+pWord = args.password
+lfProfile = args.log_forwarding
+asProfile = args.AS_Profile
+dag = args.DAG
+
 #Generate API key
-call = "https://{host}/api/?type=keygen&user={user}&password={password}".format(host=fwHost,user=uName,password=pWord)
+call = "https://{host}/api/?type=keygen&user={user}&password={password}".format(host=fwHost, user=uName, password=pWord)
 try:
 	r = requests.get(call, verify=False)
 	tree = ET.fromstring(r.text)
@@ -100,31 +117,4 @@ def create_lfp_profile (fwHost, apiKey, lfProfile):
             status = "Commit status - " + " " + str(tree[0][0][12].text) + "% complete"
             print ('{0}\r'.format(status)),
 
-def main():
 
-    # python skillets currently use CLI arguments to get input from the operator / user. Each argparse argument long
-    # name must match a variable in the .meta-cnc file directly
-    parser = argparse.ArgumentParser(description='Get meta-cnc Params')
-    parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
-    parser.add_argument("-u", "--username", help="Firewall API Key", required=True)
-    parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
-    parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", type=str)
-    parser.add_argument("-a", "--AS_Profile", help="Anti-Spyware Profile name", type=str)
-    parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", type=str)
-    args = parser.parse_args()
-    
-    if len(sys.argv) < 2:
-        parser.print_help()
-        parser.exit()
-        exit(1)
-        
-    fwHost = args.firewall
-    uName = args.username
-    pWord = args.password
-    lfProfile = args.log_forwarding
-    asProfile = args.AS_Profile
-    dag = args.DAG
-
-
-if __name__ == '__main__':
-    main()
