@@ -33,12 +33,12 @@ try:
 		apiKey = tree[0][0].text
 
 except requests.exceptions.ConnectionError as e:
-	print "There was a problem connecting to the firewall.  Please check the connection information and try again."
+	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 try:
 	apiKey
 except NameError as e:
-	print "There was a problem connecting to the firewall.  Please check the connection information and try again."
+	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
     
