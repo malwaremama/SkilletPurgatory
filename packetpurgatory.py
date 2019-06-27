@@ -58,12 +58,12 @@ except NameError as e:
 	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
-	print('Creating log forwarding profile...')
+	print("Creating log forwarding profile...")
 	log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
 	element = "<entry name='{log_fw}'/>".format(log_fw=lfProfile)
     	values = {'type': 'config', 'action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
-    	palocall = 'https://{host}/api/'.format(host=fwHost)
-    	lfp_create_r = requests.post(palocall, data=values, verify=False)
+	palocall = 'https://{host}/api/'.format(host=fwHost)
+	lfp_create_r = requests.post(palocall, data=values, verify=False)
     	tree = ET.fromstring(lfp_create_r.text)
     
     	match_list_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list".format(log_fw=lfProfile)
