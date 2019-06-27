@@ -18,28 +18,27 @@ Author: Sandy Wenzel <swenzel@paloaltonetworks.com>
 '''
 
 import argparse
-import logging
 import sys
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
-def getApiKey(fwHost, uName, pWord):
-    
-    call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost, uName, pWord)
-    try:
-            api_response = requests.get(call, verify=False) 
-            tree = ET.fromstring(api_response.text)
-            if tree.get('status') == "success":
-                apiKey = tree[0][0].text
+#Generate API key
+call = "https://{host}/api/?type=keygen&user={user}&password={password}".format(host=fwHost,user=uName,password=pWord)
+try:
+	r = requests.get(call, verify=False)
+	tree = ET.fromstring(r.text)
+	if tree.get('status') == "success":
+		apiKey = tree[0][0].text
 
-    except requests.exceptions.ConnectionError as e:
-            print("There was a problem connecting to the firewall.  Please check the connection information and try again")
-    try:
-        apiKey
-    except NameError as e:
-        print("There was a problem connecting to the firewall.  Please check the connection information and try again")
+except requests.exceptions.ConnectionError as e:
+	print "There was a problem connecting to the firewall.  Please check the connection information and try again."
+
+try:
+	apiKey
+except NameError as e:
+	print "There was a problem connecting to the firewall.  Please check the connection information and try again."
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
     
