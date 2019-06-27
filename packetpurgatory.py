@@ -39,6 +39,7 @@ uName = args.username
 pWord = args.password
 lfProfile = args.log_forwarding
 asProfile = args.AS_Profile
+allowRule = args.allowall
 dag = args.DAG
 
 # Generate API key
@@ -50,26 +51,14 @@ try:
         apiKey = tree[0][0].text
 
 except requests.exceptions.ConnectionError as e:
-    print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
+    print("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 try:
     apiKey
 except NameError as e:
-    print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
+    print("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 else:
-
-    '''
-#Create URL filtering profile called 'alert-all'
-    type = "config"
-    action = "set"
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/profiles/url-filtering"
-    element = "<entry name='alert-all'/>"
-    call = "https://%s/api/?type=%s&action=%s&xpath=%s&element=%s&key=%s" % (fwHost, type, action, xpath, element, apiKey)
-    r = requests.post(call, verify=False)
-    tree = ET.fromstring(r.text)
-    print ("Create alert-all URL filtering profile: " + tree.get('status') + " - " + str(tree[0].text))
-'''
 
 #Create Log-Forwarding Profile
     xpath = "/config/shared/log-settings/profiles"
@@ -87,36 +76,82 @@ else:
     tree = ET.fromstring(lfp_create_r.text)
 
     xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list/entry[@name='Quarantine']" % (lfProfile)
-    element = "<log-type>threat</log-type><filter>action eq sinkhole</filter><actions><entry name='AddQuarantineTag'><type><tagging><tags><member>quarantine</member></tags><target>source-address</target></tagging></type></entry></actions>"
+    element = "<log-type>threat</log-type><filter>(action eq sinkhole)</filter><send-to-panorama>yes</send-to-panorama><actions><entry name='AddQuarantineTag'><type><tagging><action>add-tag</action><tags><member>quarantine</member></tags><target>source-address</target><registration><localhost/></registration></tagging></type></entry></actions>"
     values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
     palocall = 'https://%s/api/' % (fwHost)
     lfp_create_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(lfp_create_r.text)
-    print ("Creating log forwarding profile: " + tree.get('status') + " - " + str(tree[0].text))
+    print("Creating log forwarding profile: " + tree.get('status'))
 
 
-# Commit the Changes and Monitor for Completion
+#Create Dynamic Address Group
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group"
+    element = "<entry name = '%s'/><dynamic><filter>quarantine</filter>" % (dag)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    dag_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(dag_create_r.text)
+
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='%s']/dynamic" % (dag)
+    element = "<filter>quarantine</filter>"
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    dag_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(dag_create_r.text)
+    print("Creating Dynamic Address Group: " + tree.get('status'))
+
+#Change Log-Forwarding and Security Profile in Existing Rule
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='%s']" % (allowRule)
+    element = "<log-setting>%s</log-setting>" % (lfProfile)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    lf_switch = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(lf_switch.text)
+
+    #Delete Existing Spyware Profile From Rule
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='%s']/profile-setting/profiles/spyware" % (allowRule)
+    values = {'type': 'config', 'action': 'delete', 'xpath': xpath, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    spyware_remove = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(spyware_remove.text)
+
+    #Update with Spyware Profile taken from Input
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='%s']/profile-setting/profiles/spyware" % (allowRule)
+    element = "<member>%s</member>" % (asProfile)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    spyware_switch = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(spyware_switch.text)
+
+#Create Security Rule
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules"
+    element = "<entry name='IsolateQuarantinedHosts/>"
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    rule_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(rule_create_r.text)
+
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
+    element = "<from><member>any</member></from><to><member>any</member></to><destination><member>any</member></destination><application><member>any</member></application><service><member>any</member></service><category><member>any</member></category><source><member>%s</member></source><action>deny</action><log-setting>Default-Logging-Profile</log-setting>" % (dag)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    rule_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(rule_create_r.text)
+
+    #Move Security Rule to the Top
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
+    values = {'type': 'config', 'action': 'move', 'xpath': xpath, 'where': 'top', 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    move = requests.get(palocall, params=values, verify=False)
+    tree = ET.fromstring(move.text)
+    print("Populating Security Rule and Moving to the Top of Policy: " + tree.get('status'))
+
+
+#Commit Changes to the NGFW
     cmd = '<commit><force></force></commit>'
-    values = {'type': 'commit', 'cmd': cmd, 'key': apiKey}
-    palocall = 'https://{host}/api/'.format(host=fwHost)
-    r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(r.text)
-    jobID = tree[0][1].text
-    print ("Commit job - " + str(jobID))
-
-    committed = 0
-    while (committed == 0):
-        cmd = '<show><jobs><id>{jobid}</id></jobs></show>'.format(jobid=jobID)
-        values = {'type': 'op', 'cmd': cmd, 'key': apiKey}
-        palocall = 'https://{host}/api/'.format(host=fwHost)
-        r = requests.post(palocall, data=values, verify=False)
-        tree = ET.fromstring(r.text)
-        if (tree[0][0][5].text == 'FIN'):
-            print ("Commit status - " + str(tree[0][0][5].text) + " " + str(tree[0][0][12].text) + "% complete")
-            committed = 1
-
-        else:
-            status = "Commit status - " + " " + str(tree[0][0][12].text) + "% complete"
-            print ('{0}\r'.format(status)),
-
-
+    values = {'type:': 'commit', 'cmd': cmd, 'key': apiKey}
+    commit_call = 'https://%s/api/' % (fwHost)
+    commit_r = requests.post(commit_call, data=values, verify=False)
+    tree = ET.fromstring(commit_r.text)
+    jobid = tree[0][1].text
+    print("Committing Policy (JobID): " + str(jobid))
