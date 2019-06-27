@@ -3,8 +3,8 @@
 # unique snippet name
 name: PacketPurgatory
 # label used for menu selection
-label: Auto-tagging & DNS Sinkhole - STEP 1
-description: This skillet will autotag and isolate host(s) from the network that are identified as communicating with malicious domains
+label: Auto-tagging & DNS Sinkhole - STEP 2
+description: This skillet will notify the user of malicious activity detected on their machine and provide an override to be self-service. You will need to import the URL Filtering Continue and Override Page that's located within the GitHub repository.
 
 # type of device configuration
 # common types are panorama, panos, and template
@@ -40,8 +40,9 @@ variables:
   - name: allowall
     description: Security rule that allows outbound traffic
     default: allow all
-  - name: AS_Profile
-    description: Name of the existing Anti-Spyware security profile where the DNS Sinkhole feature is configured.
+  - name: URL_Profile
+    description: Provide a name for the URL Filtering security profile
+    default: UNQuarantineOverride
     type_hint: text
   - name: log_forwarding
     description: Name of the Log Forwarding Profile to autotag infected hosts
@@ -61,6 +62,6 @@ variables:
 # files will load in the order listed
 snippets:
   - name: script
-    file: ../../packetpurgatory.py
+    file: ../../happypackets.py
 # ---------------------------------------------------------------------
 # end of snippets section
