@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 DOCUMENTATION = '''
 Copyright (c) 2018, Palo Alto Networks
 
@@ -18,11 +18,43 @@ Author: Sandy Wenzel <swenzel@paloaltonetworks.com>
 '''
 
 import argparse
+import logging
 import sys
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
+
+def getApiKey(fwHost, uname, pword):
+
+    """
+    Generates a Paloaltonetworks api key from username and password credentials
+    :param hostname: Ip address of firewall
+    :param username:
+    :param password:
+    :return: api_key API key for firewall
+    """
+
+
+    call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost, uname, pword)
+
+    apiKey = ""
+    while True:
+        try:
+            # response = urllib.request.urlopen(url, data=encoded_data, context=ctx).read()
+            response = send_request(call)
+
+
+        except DeployRequestException as updateerr:
+            logger.info("No response from FW. Wait 20 secs before retry")
+            time.sleep(10)
+            continue
+
+        else:
+            api_key = ET.XML(response.content)[0][0].text
+            logger.info("FW Management plane is Responding so checking if Dataplane is ready")
+            logger.debug("Response to get_api is {}".format(response))
+            return apiKey
 
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
@@ -104,8 +136,8 @@ def main():
         exit(1)
         
     fwHost = args.firewall
-    username = args.username
-    password = args.password
+    uname = args.username
+    pword = args.password
     lfProfile = args.log_forwarding
     asProfile = args.AS_Profile
     dag = args.DAG
