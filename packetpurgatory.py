@@ -41,56 +41,58 @@ lfProfile = args.log_forwarding
 asProfile = args.AS_Profile
 dag = args.DAG
 
-#Generate API key
-call = "https://{host}/api/?type=keygen&user={user}&password={password}".format(host=fwHost, user=uName, password=pWord)
+# Generate API key
+call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost,uName,pWord)
 try:
-	r = requests.get(call, verify=False)
-	tree = ET.fromstring(r.text)
-	if tree.get('status') == "success":
-		apiKey = tree[0][0].text
+    r = requests.get(call, verify=False)
+    tree = ET.fromstring(r.text)
+    if tree.get('status') == "success":
+        apiKey = tree[0][0].text
 
 except requests.exceptions.ConnectionError as e:
-	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
+    print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 try:
-	apiKey
+    apiKey
 except NameError as e:
-	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
+    print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
-def create_lfp_profile (fwHost, apiKey, lfProfile):
-	print("Creating log forwarding profile...")
-	log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
-	element = "<entry name='{log_fw}'/>".format(log_fw=lfProfile)
-    	values = {'type': 'config', 'action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
-	palocall = 'https://{host}/api/'.format(host=fwHost)
-	lfp_create_r = requests.post(palocall, data=values, verify=False)
-    	tree = ET.fromstring(lfp_create_r.text)
-    
-    	match_list_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list".format(log_fw=lfProfile)
-    	element += "<entry name='Quarantine'/></match-list>"
-    	element += "<log-type>threat</log-type>"
-    	element += "<filter>(action+eq+sinkhole></filter>"
-    	element += "<send-to-panorama>yes</send-to-panorama>"
-    	values = {'type': 'config', 'action': 'set', 'xpath': match_list_xpath, 'element': element, 'key': apiKey}
-    	palocall = 'https://{host}/api/'.format(host=fwHost)
-    	match_list_r = requests.post(palocall, data=values, verify=False)
-    	tree = ET.fromstring(match_list_r.text)
-    
-    	actions_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions".format(log_fw=lfProfile)
-    	element += "<entry name='AddQuarantineTag'/>"
-    	values = {'type': 'config', 'action': 'set', 'xpath': actions_xpath, 'element': element, 'key': apiKey}
-    	palocall = 'https://{host}/api/'.format(host=fwHost)
-    	actions_r = requests.post(palocall, data=values, verify=False)
-    	tree = ET.fromstring(actions_r.text)
-    
-    	tags_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions/entry[@name='AddQuarantineTag']/type/tagging".format(log_fw=lfProfile)
-    	element += "<tags><member>quarantine</tags></member>"
-    	element += "<target>source-address</target>"
-    	element += "<action>add-tag></action>"
-    	values = {'type': 'config', 'action': 'set', 'xpath': tags_xpath, 'element': element, 'key': apiKey}
-    	palocall = 'https://{host}/api/'.format(host=fwHost)
-    	tag_create_r = requests.post(palocall, data=values, verify=False)
-    	tree = ET.fromstring(tag_create_r.text)
+else:
+
+    '''
+#Create URL filtering profile called 'alert-all'
+    type = "config"
+    action = "set"
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/profiles/url-filtering"
+    element = "<entry name='alert-all'/>"
+    call = "https://%s/api/?type=%s&action=%s&xpath=%s&element=%s&key=%s" % (fwHost, type, action, xpath, element, apiKey)
+    r = requests.post(call, verify=False)
+    tree = ET.fromstring(r.text)
+    print ("Create alert-all URL filtering profile: " + tree.get('status') + " - " + str(tree[0].text))
+'''
+
+#Create Log-Forwarding Profile
+    xpath = "/config/shared/log-settings/profiles"
+    element = "<entry name='%s'/>" % (lfProfile)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    lfp_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(lfp_create_r.text)
+
+    xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list" % (lfProfile)
+    element = "<entry name='Quarantine'/>"
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    lfp_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(lfp_create_r.text)
+
+    xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list/entry[@name='Quarantine']" % (lfProfile)
+    element = "<log-type>threat</log-type><filter>action eq sinkhole</filter><actions><entry name='AddQuarantineTag'><type><tagging><tags><member>quarantine</member></tags><target>source-address</target></tagging></type></entry></actions>"
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    lfp_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(lfp_create_r.text)
+    print ("Creating log forwarding profile: " + tree.get('status') + " - " + str(tree[0].text))
 
 
 # Commit the Changes and Monitor for Completion
