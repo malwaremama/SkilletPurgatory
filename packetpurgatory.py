@@ -58,39 +58,39 @@ except NameError as e:
 	print ("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
+	print('Creating log forwarding profile...')
+	log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
+	element = "<entry name='{log_fw}'/>".format(log_fw=lfProfile)
+    	values = {'type': 'config', 'action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
+    	palocall = 'https://{host}/api/'.format(host=fwHost)
+    	lfp_create_r = requests.post(palocall, data=values, verify=False)
+    	tree = ET.fromstring(lfp_create_r.text)
     
-    log_settings_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles"
-    element = "<entry name='{log_fw}'/>".format(log_fw=lfProfile)
-    values = {'type': 'config', 'action': 'set', 'xpath': log_settings_xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://{host}/api/'.format(host=fwHost)
-    lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp_create_r.text)
+    	match_list_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list".format(log_fw=lfProfile)
+    	element += "<entry name='Quarantine'/></match-list>"
+    	element += "<log-type>threat</log-type>"
+    	element += "<filter>(action+eq+sinkhole></filter>"
+    	element += "<send-to-panorama>yes</send-to-panorama>"
+    	values = {'type': 'config', 'action': 'set', 'xpath': match_list_xpath, 'element': element, 'key': apiKey}
+    	palocall = 'https://{host}/api/'.format(host=fwHost)
+    	match_list_r = requests.post(palocall, data=values, verify=False)
+    	tree = ET.fromstring(match_list_r.text)
     
-    match_list_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list".format(log_fw=lfProfile)
-    element += "<entry name='Quarantine'/></match-list>"
-    element += "<log-type>threat</log-type>"
-    element += "<filter>(action+eq+sinkhole></filter>"
-    element += "<send-to-panorama>yes</send-to-panorama>"
-    values = {'type': 'config', 'action': 'set', 'xpath': match_list_xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://{host}/api/'.format(host=fwHost)
-    match_list_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(match_list_r.text)
+    	actions_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions".format(log_fw=lfProfile)
+    	element += "<entry name='AddQuarantineTag'/>"
+    	values = {'type': 'config', 'action': 'set', 'xpath': actions_xpath, 'element': element, 'key': apiKey}
+    	palocall = 'https://{host}/api/'.format(host=fwHost)
+    	actions_r = requests.post(palocall, data=values, verify=False)
+    	tree = ET.fromstring(actions_r.text)
     
-    actions_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions".format(log_fw=lfProfile)
-    element += "<entry name='AddQuarantineTag'/>"
-    values = {'type': 'config', 'action': 'set', 'xpath': actions_xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://{host}/api/'.format(host=fwHost)
-    actions_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(actions_r.text)
-    
-    tags_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions/entry[@name='AddQuarantineTag']/type/tagging".format(log_fw=lfProfile)
-    element += "<tags><member>quarantine</tags></member>"
-    element += "<target>source-address</target>"
-    element += "<action>add-tag></action>"
-    values = {'type': 'config', 'action': 'set', 'xpath': tags_xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://{host}/api/'.format(host=fwHost)
-    tag_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(tag_create_r.text)
+    	tags_xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/log-settings/profiles/entry[@name='{log_fw}']/match-list/entry[@name='Quarantine']/actions/entry[@name='AddQuarantineTag']/type/tagging".format(log_fw=lfProfile)
+    	element += "<tags><member>quarantine</tags></member>"
+    	element += "<target>source-address</target>"
+    	element += "<action>add-tag></action>"
+    	values = {'type': 'config', 'action': 'set', 'xpath': tags_xpath, 'element': element, 'key': apiKey}
+    	palocall = 'https://{host}/api/'.format(host=fwHost)
+    	tag_create_r = requests.post(palocall, data=values, verify=False)
+    	tree = ET.fromstring(tag_create_r.text)
 
 
 # Commit the Changes and Monitor for Completion
