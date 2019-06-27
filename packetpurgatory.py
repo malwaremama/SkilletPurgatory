@@ -26,36 +26,20 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
 def getApiKey(fwHost, uName, pWord):
-
-    """
-    Generates a Paloaltonetworks api key from username and password credentials
-    :param hostname: Ip address of firewall
-    :param username:
-    :param password:
-    :return: api_key API key for firewall
-    """
-
-
+    
     call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost, uName, pWord)
+    try:
+            api_response = requests.get(call, verify=False) 
+            tree = ET.fromstring(api_response.text)
+            if tree.get('status') == "success":
+                apiKey = tree[0][0].text
 
-    apiKey = ""
-    while True:
-        try:
-            # response = urllib.request.urlopen(url, data=encoded_data, context=ctx).read()
-            response = send_request(call)
-
-
-        except DeployRequestException as updateerr:
-            logger.info("No response from FW. Wait 20 secs before retry")
-            time.sleep(10)
-            continue
-
-        else:
-            apiKey = ET.XML(response.content)[0][0].text
-            logger.info("FW Management plane is Responding so checking if Dataplane is ready")
-            logger.debug("Response to get_api is {}".format(response))
-            return apiKey
-
+    except requests.exceptions.ConnectionError as e:
+            print("There was a problem connecting to the firewall.  Please check the connection information and try again")
+    try:
+        apiKey
+    except NameError as e:
+        print("There was a problem connecting to the firewall.  Please check the connection information and try again")
 
 def create_lfp_profile (fwHost, apiKey, lfProfile):
     
