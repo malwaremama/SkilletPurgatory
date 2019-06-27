@@ -25,7 +25,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import xml.etree.ElementTree as ET
 
-def getApiKey(fwHost, uname, pword):
+def getApiKey(fwHost, uName, pWord):
 
     """
     Generates a Paloaltonetworks api key from username and password credentials
@@ -36,7 +36,7 @@ def getApiKey(fwHost, uname, pword):
     """
 
 
-    call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost, uname, pword)
+    call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost, uName, pWord)
 
     apiKey = ""
     while True:
@@ -51,7 +51,7 @@ def getApiKey(fwHost, uname, pword):
             continue
 
         else:
-            api_key = ET.XML(response.content)[0][0].text
+            apiKey = ET.XML(response.content)[0][0].text
             logger.info("FW Management plane is Responding so checking if Dataplane is ready")
             logger.debug("Response to get_api is {}".format(response))
             return apiKey
@@ -136,8 +136,8 @@ def main():
         exit(1)
         
     fwHost = args.firewall
-    uname = args.username
-    pword = args.password
+    uName = args.username
+    pWord = args.password
     lfProfile = args.log_forwarding
     asProfile = args.AS_Profile
     dag = args.DAG
