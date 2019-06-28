@@ -132,3 +132,23 @@ else:
     tree = ET.fromstring(commit_r.text)
     jobid = tree[0][1].text
     print("Committing Policy (JobID): " + str(jobid))
+     
+print(r'''\ Go rescue your host(s) from packet jail!
+  _________________________
+     ||   ||     ||   ||
+     ||   ||, , ,||   ||
+     ||  (||/|/(\||/  ||
+     ||  ||| _'_`|||  ||
+     ||   || o o ||   ||
+     ||  (||  - `||)  ||
+     ||   ||  =  ||   ||
+ ssw ||   ||\___/||   ||
+     ||___||) , (||___||
+    /||---||-\_/-||---||\
+   / ||--_||_____||_--|| \
+  (_(||)-| S123-45 |-(||)_)
+|"""""""""""""""""""""""""""|
+| "But...but...e-mail said  |
+|   I would get millions    |
+|   for aiding a prince!"   |
+ """""""""""""""""""""""""""''')
