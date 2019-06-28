@@ -29,9 +29,8 @@ parser = argparse.ArgumentParser(description='Get meta-cnc Params')
 parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
 parser.add_argument("-u", "--username", help="Firewall API Key", required=True)
 parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
-parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", required=True)
-parser.add_argument("-a", "--AS_Profile", help="Anti-Spyware Profile name", required=True)
-parser.add_argument("-r", "--allowall", help="Anti-Spyware Profile name", required=True)
+parser.add_argument("-l", "--url_forwarding", help="Log Forwarding Profile name", required=True)
+parser.add_argument("-a", "--url_profile", help="Anti-Spyware Profile name", required=True)
 parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", required=True)
 args = parser.parse_args()
 
@@ -40,7 +39,6 @@ uName = args.username
 pWord = args.password
 urlLogProfile = args.url_forwarding
 urlProfile = args.url_profile
-allowRule = args.allowall
 dag = args.DAG
 
 # Generate API key
@@ -60,22 +58,7 @@ except NameError as e:
     print("There was a problem connecting to the firewall.  Please check the connection information and try again.")
 
 else:
-
-    #Create URL Log-Forwarding Profile
-    xpath = "/config/shared/log-settings/profiles"
-    element = "<entry name='%s'/>" % (urlLogProfile)
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp_create_r.text)
-
-    xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list" % (urlLogProfile)
-    element = "<entry name='UNQuarantine'/>"
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp_create_r.text)
-
+#Create URL Log-Forwarding Profile
     xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list/entry[@name='UNQuarantine']" % (urlLogProfile)
     element = "<log-type>url</log-type><filter>(action eq override)</filter><send-to-panorama>yes</send-to-panorama><actions><entry name='RemoveQuarantineTag'><type><tagging><action>remove-tag</action><tags><member>quarantine</member></tags><target>source-address</target><registration><localhost/></registration></tagging></type></entry></actions>"
     values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
@@ -84,7 +67,7 @@ else:
     tree = ET.fromstring(lfp_create_r.text)
     print("Creating URL Log Forwarding Profile: " + tree.get('status'))
 
-    #Create URL Filtering profile for Override
+#Create URL Filtering profile for Override/Password
     xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/profiles/url-filtering"
     element = "<entry name='%s'/>" % (urlProfile)
     values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
@@ -116,4 +99,36 @@ else:
     r = requests.post(override_call, data=values, verify=False)
     tree = ET.fromstring(r.text)
     print("Override on all categories: " + tree.get('status'))
-    print(r.text)
+
+    #set url-admin-override password and redirect
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/url-admin-override"
+    element = "<password>paloalto</password><mode><redirect><address>192.168.45.20</address></redirect></mode>"
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    lfp_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(lfp_create_r.text)
+
+#Create URL Override Security Rule
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='OverrideQuarantine']"
+    element = "<from><member>trust</member></from><source><member>%s</member></source><to><member>any</member></to><destination><member>any</member></destination><application><member>web-browsing</member><member>ssl</member></application><service><member>application-default</member></service><action>allow</action><log-setting>%s</log-setting><profile-setting><profiles><url-filtering><member>%s</member></url-filtering></profiles></profile-setting>" % (dag, urlLogProfile, urlProfile)
+    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    rule_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(rule_create_r.text)
+
+    #move Security Rule to the Top
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='OverrideQuarantine']"
+    values = {'type': 'config', 'action': 'move', 'xpath': xpath, 'where': 'top', 'key': apiKey}
+    palocall = 'https://%s/api/' % (fwHost)
+    move = requests.get(palocall, params=values, verify=False)
+    tree = ET.fromstring(move.text)
+    print("Populating Override Security Rule and Moving to the Top of Policy: " + tree.get('status'))
+
+#Commit Changes to the NGFW
+    cmd = '<commit><force></force></commit>'
+    values = {'type:': 'commit', 'cmd': cmd, 'key': apiKey}
+    commit_call = 'https://%s/api/' % (fwHost)
+    commit_r = requests.post(commit_call, data=values, verify=False)
+    tree = ET.fromstring(commit_r.text)
+    jobid = tree[0][1].text
+    print("Committing Policy (JobID): " + str(jobid))
