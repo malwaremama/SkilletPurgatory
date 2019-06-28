@@ -3,7 +3,7 @@
 # unique snippet name
 name: PacketPurgatory
 # label used for menu selection
-label: Auto-tagging & DNS Sinkhole [STEP-1]: Quarantine
+label: Auto-tagging & DNS Sinkhole [STEP-1] - Quarantine
 description: This skillet will autotag and isolate host(s) from the network that are identified as communicating with malicious domains
 
 # type of device configuration
