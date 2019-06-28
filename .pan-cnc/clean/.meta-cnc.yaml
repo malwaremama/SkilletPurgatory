@@ -37,19 +37,15 @@ variables:
   - name: password
     description: NGFW Password
     type_hint: The password to the NGFW
-  - name: allowall
-    description: Security rule that allows outbound traffic
-    default: allow all
-  - name: URL_Profile
+  - name: url_forwarding
+    description: Name of Log Forwarding Profile to be created to untag hosts
+    default: LFP-URL
+  - name: urul_profile
     description: Provide a name for the URL Filtering security profile
-    default: UNQuarantineOverride
-    type_hint: text
-  - name: log_forwarding
-    description: Name of the Log Forwarding Profile to autotag infected hosts
-    default: LFP-Quarantine
+    default: UNQuarantine
     type_hint: text
   - name: DAG
-    description: Name of the Dynamic Address Group for the infected hosts
+    description: Name of the Dynamic Address Group for the infected hosts used in Step-1
     default: QuarantinedHosts
     type_hint: text
 
