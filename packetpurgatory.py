@@ -61,37 +61,24 @@ except NameError as e:
 
 else:
 
-#Create Log-Forwarding Profile
-    xpath = "/config/shared/log-settings/profiles"
-    element = "<entry name='%s'/>" % (lfProfile)
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp_create_r.text)
+#Create objects
 
-    xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list" % (lfProfile)
-    element = "<entry name='Quarantine'/>"
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    lfp_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lfp_create_r.text)
-
+    #create log forwarding profile
     xpath = "/config/shared/log-settings/profiles/entry[@name='%s']/match-list/entry[@name='Quarantine']" % (lfProfile)
-    element = "<log-type>threat</log-type><filter>(action eq sinkhole)</filter><send-to-panorama>yes</send-to-panorama><actions><entry name='AddQuarantineTag'><type><tagging><action>add-tag</action><tags><member>quarantine</member></tags><target>source-address</target><registration><localhost/></registration></tagging></type></entry></actions>"
+    element = "<log-type>traffic</log-type><filter>All Logs</filter><send-to-panorama>yes</send-to-panorama><actions><entry name='AddQuarantineTag'><type><tagging><action>add-tag</action><tags><member>quarantine</member></tags><target>source-address</target><registration><localhost/></registration></tagging></type></entry></actions>"
     values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
     palocall = 'https://%s/api/' % (fwHost)
     lfp_create_r = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(lfp_create_r.text)
     print("Creating log forwarding profile: " + tree.get('status'))
 
-
-#Create Dynamic Address Group
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group"
-    element = "<entry name = '%s'/><dynamic><filter>quarantine</filter>" % (dag)
+    #create FQDN object
+    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address/entry[@name='sinkhole.paloaltonetworks.com']"
+    element = "<fqdn>sinkhole.paloaltonetworks.com</fqdn>"
     values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
     palocall = 'https://%s/api/' % (fwHost)
-    dag_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(dag_create_r.text)
+    fqdn_create_r = requests.post(palocall, data=values, verify=False)
+    tree = ET.fromstring(fqdn_create_r.text)
 
     xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='%s']/dynamic" % (dag)
     element = "<filter>quarantine</filter>"
@@ -101,13 +88,8 @@ else:
     tree = ET.fromstring(dag_create_r.text)
     print("Creating Dynamic Address Group: " + tree.get('status'))
 
-#Change Log-Forwarding and Security Profile in Existing Rule
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='%s']" % (allowRule)
-    element = "<log-setting>%s</log-setting>" % (lfProfile)
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    lf_switch = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(lf_switch.text)
+
+#Change Security Profile in Existing Rule
 
     #Delete Existing Spyware Profile From Rule
     xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='%s']/profile-setting/profiles/spyware" % (allowRule)
@@ -124,40 +106,50 @@ else:
     spyware_switch = requests.post(palocall, data=values, verify=False)
     tree = ET.fromstring(spyware_switch.text)
 
-#Create Security Rule
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules"
-    element = "<entry name='IsolateQuarantinedHosts/>"
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    rule_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(rule_create_r.text)
 
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
-    element = "<from><member>any</member></from><to><member>any</member></to><destination><member>any</member></destination><application><member>any</member></application><service><member>any</member></service><category><member>any</member></category><source><member>%s</member></source><action>deny</action><log-setting>Default-Logging-Profile</log-setting>" % (dag)
-    values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    rule_create_r = requests.post(palocall, data=values, verify=False)
-    tree = ET.fromstring(rule_create_r.text)
+#Create Security Rules
 
-    #Move Security Rule to the Top
-    xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
-    values = {'type': 'config', 'action': 'move', 'xpath': xpath, 'where': 'top', 'key': apiKey}
-    palocall = 'https://%s/api/' % (fwHost)
-    move = requests.get(palocall, params=values, verify=False)
-    tree = ET.fromstring(move.text)
-    print("Populating Security Rule and Moving to the Top of Policy: " + tree.get('status'))
+    #create sinkhole traffic security rule
+xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='SinkholeTraffic']"
+element = "<from><member>trust</member></from><to><member>untrust</member></to><destination><member>sinkhole.paloaltonetworks.com</member></destination><application><member>any</member></application><service><member>any</member></service><category><member>any</member></category><source><member>any</member></source><action>allow</action><log-setting>%s</log-setting>" % (lfProfile)
+values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+palocall = 'https://%s/api/' % (fwHost)
+sinkhole_rule_create = requests.post(palocall, data=values, verify=False)
+tree = ET.fromstring(sinkhole_rule_create.text)
 
+    #move sinkhole rule to the top
+xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='SinkholeTraffic']"
+values = {'type': 'config', 'action': 'move', 'xpath': xpath, 'where': 'top', 'key': apiKey}
+palocall = 'https://%s/api/' % (fwHost)
+move = requests.get(palocall, params=values, verify=False)
+tree = ET.fromstring(move.text)
+
+    #isolation security rule
+xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
+element = "<from><member>trust</member></from><to><member>untrust</member></to><destination><member>any</member></destination><application><member>any</member></application><service><member>any</member></service><category><member>any</member></category><source><member>%s</member></source><action>deny</action><log-setting>Default-Logging-Profile</log-setting>" % (dag)
+values = {'type': 'config', 'action': 'set', 'xpath': xpath, 'element': element, 'key': apiKey}
+palocall = 'https://%s/api/' % (fwHost)
+rule_create_r = requests.post(palocall, data=values, verify=False)
+tree = ET.fromstring(rule_create_r.text)
+
+    #move isolation rule to the top
+xpath = "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase/security/rules/entry[@name='IsolateQuarantinedHosts']"
+values = {'type': 'config', 'action': 'move', 'xpath': xpath, 'where': 'top', 'key': apiKey}
+palocall = 'https://%s/api/' % (fwHost)
+move = requests.get(palocall, params=values, verify=False)
+tree = ET.fromstring(move.text)
+print("Populating Security Rules and Moving to the Top of Policy: " + tree.get('status'))
 
 #Commit Changes to the NGFW
-    cmd = '<commit><force></force></commit>'
-    values = {'type:': 'commit', 'cmd': cmd, 'key': apiKey}
-    commit_call = 'https://%s/api/' % (fwHost)
-    commit_r = requests.post(commit_call, data=values, verify=False)
-    tree = ET.fromstring(commit_r.text)
-    jobid = tree[0][1].text
-    print("Committing Policy (JobID): " + str(jobid))
-      
-print(r'''\ Now go forth and create havoc on your Windows Victim!!
+cmd = '<commit><force></force></commit>'
+values = {'type:': 'commit', 'cmd': cmd, 'key': apiKey}
+commit_call = 'https://%s/api/' % (fwHost)
+commit_r = requests.post(commit_call, data=values, verify=False)
+tree = ET.fromstring(commit_r.text)
+jobid = tree[0][1].text
+print("Committing Policy (JobID): " + str(jobid))
+
+print(r'''\ Now go forth and create havoc on your Win7 Victim!
                        ______
                     .-"      "-.
                    /            \
