@@ -1,7 +1,7 @@
 # Packet Purgatory Skillet
 
 #### Purpose of this Skillet:
-This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x by detecting and quarantine botnet hosts. It will auto-tag the host into a dynamic address group and isolate them in a deny security rule.
+This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x by detecting and quarantine botnet hosts that would closely mimick a customer environment. It will auto-tag the host into a dynamic address group and isolate them in a deny security rule.
 
 #### Walkthrough:
 Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler.
