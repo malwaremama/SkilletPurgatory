@@ -146,9 +146,9 @@ print(r'''\ Go rescue your host(s) from packet jail!
      ||___||) , (||___||
     /||---||-\_/-||---||\
    / ||--_||_____||_--|| \
-  (_(||)-| S123-45 |-(||)_)
+  (_(||)-| SID: 31619 |-(||)_)
 |"""""""""""""""""""""""""""|
-| "But...but...e-mail said  |
-|   I would get millions    |
+| "But...but...the e-mail   |
+| said I would get millions |
 |   for aiding a prince!"   |
  """""""""""""""""""""""""""''')
