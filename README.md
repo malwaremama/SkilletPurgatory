@@ -4,13 +4,15 @@ This is the initial release of the Packet Purgatory Skillet.
 #### Purpose:
 This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x and onward by detecting and quarantine botnet hosts that would closely mimick a customer environment. It will auto-tag the host into a dynamic address group and isolate them in a deny security rule.
 
+
 #### Requirements and Dependencies:
-This demo is based off of resources available in the SE LiAB v2.x. You will need these host VM's up and running:
-* msft-esm-dc (DNS and UID Server)
-* msft-victim-7 (to query the bad thingz)
+This demo is based off of resources available in the SE LiAB v2.x. You will need these host VM's up and running in order to execute the demo:
+* msft-esm-dc (Internal DNS server and UID Server)
+* msft-victim-7 (Query all the bad thingz)
 * pan-panos-vm50
 
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
+
 
 #### Walkthrough:
 Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler.
