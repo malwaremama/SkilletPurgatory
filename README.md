@@ -6,7 +6,7 @@ This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x by detec
 #### Walkthrough:
 Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler.
 
-### Support Policy
+## Support Policy
 The code and templates in the repo are released under an as-is, best effort,
 support policy. These scripts should be seen as community supported and
 Palo Alto Networks will contribute our expertise as and when possible.
