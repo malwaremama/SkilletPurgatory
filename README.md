@@ -2,7 +2,7 @@
 This is the initial release of the Packet Purgatory Skillet. 
 
 #### Purpose:
-This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x and onward by detecting and quarantine botnet hosts that would closely mimick a customer environment. It will auto-tag the host into a dynamic address group and isolate them in a deny security rule.
+This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x NGFW and onward by detecting and quarantine a host that is actively communicating to C2. This would closely mimick a customer environment. It will auto-tag the host into a dynamic address group and isolate them in a security rule that is set to deny. 
 
 
 #### Requirements and Dependencies:
@@ -15,7 +15,7 @@ It is assumed that you have all the appropriate content updates already installe
 
 
 #### Walkthrough:
-Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler.
+Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
 
 ## Support Policy
 The code and templates in the repo are released under an as-is, best effort,
