@@ -29,6 +29,10 @@ First step is to import this repository into Panhandler. Panhandler will push th
 3. On the msft-victim-7:
        * Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
        * Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
+       ```
+       nslookup <baddomain>
+       ping -t <baddomian>
+       ```
        * You should see the NGFW answering the request with *sinkhole.paloaltonetworks.com*. The IP address will change over time. This is the expected behavior to avoid being blacklisted.
 4. On the NGFW
        * Check the dyanmic address group in the NGFW to see if the host has been populated
