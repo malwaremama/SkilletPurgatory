@@ -21,36 +21,36 @@ First step is to import this repository into Panhandler. Panhandler will push th
 
 ###### [Step-1] - Quarantine
 1. Fill out the required fields and hit "Submit"
-       * Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
+* Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
 2. Verify the configurations have been pushed to the NGFW - you should now see:
-       * 2-new security rules at the top of the policy
-       * A log forwarding profile
-       * A dynamic address group (DAG) and confirm this is empty
+* 2-new security rules at the top of the policy
+* A log forwarding profile
+* A dynamic address group (DAG) and confirm this is empty
 3. On the msft-victim-7:
-       * Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
-       * Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
+* Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
+* Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
 ```
 nslookup <baddomain>
 ping -t <baddomian>
 ```
 * You should see the NGFW answering the request with *sinkhole.paloaltonetworks.com*. The IP address will change over time. This is the expected behavior to avoid being blacklisted.
 4. On the NGFW
-       * Check the dyanmic address group in the NGFW to see if the host has been populated
-       * *back on the msft-victim-7:* Open an Incognito browser session and try to surf around (at this point the host should be quarantined)
-       * Check the traffic logs to verify the host is indeed in packet purgatory
+* Check the dyanmic address group in the NGFW to see if the host has been populated
+* *back on the msft-victim-7:* Open an Incognito browser session and try to surf around (at this point the host should be quarantined)
+* Check the traffic logs to verify the host is indeed in packet purgatory
 
 __Step-1 of the Demo is Now Complete__
 
 ###### [Step-2] - Override
 1. Fill out the required fields and hit "Submit"
-       * Remember when I said to take note of the DAG name?!
+* Remember when I said to take note of the DAG name?!
 2. Verify the configurations have been pushed to the NGFW - you should now see:
-       * 1-new security rules at the top of the policy
-       * Another log forwarding profile added
-       * A URL Filtering security profile with all categories listed under *Override Categories*
+* 1-new security rules at the top of the policy
+* Another log forwarding profile added
+* A URL Filtering security profile with all categories listed under *Override Categories*
 3. On the poor, lonely, isolated msft-victim-7:
-       * Open an Incognito browser session and attempt to browse a website
-       * You should now see the override page (the password is the default password for the lab - if you forget it's also in the script :-))
+* Open an Incognito browser session and attempt to browse a website
+* You should now see the override page (the password is the default password for the lab - if you forget it's also in the script :-))
 
 Huzzah! The host has been rescued!
 
