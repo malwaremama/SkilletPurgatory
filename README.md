@@ -53,6 +53,7 @@ __Step-1 of the Demo is Now Complete__
        * You should now see the override page (the password is the default password for the lab - if you forget it's also in the script :-))
 
 Huzzah! The host has been rescued!
+
 __This Concludes the Demo__   
 
 
