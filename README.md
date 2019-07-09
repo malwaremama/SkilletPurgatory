@@ -19,7 +19,7 @@ It is assumed that you have all the appropriate content updates already installe
 #### How to _SEND IT_:
 First step is to import this repository into Panhandler. Panhandler will push the configuration items to the specified environment. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
 
-#####[Step-1] - Quarantine
+###### [Step-1] - Quarantine
 1. Fill out the required fields and hit "Submit"
        * Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
 2. Verify the configurations have been pushed to the NGFW - you should now see:
@@ -41,7 +41,7 @@ First step is to import this repository into Panhandler. Panhandler will push th
 
 __Step-1 of the Demo is Now Complete__
 
-#####[Step-2] - Override
+###### [Step-2] - Override
 1. Fill out the required fields and hit "Submit"
        * Remember when I said to take note of the DAG name?!
 2. Verify the configurations have been pushed to the NGFW - you should now see:
