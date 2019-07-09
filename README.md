@@ -1,8 +1,8 @@
 # Packet Purgatory Skillet
-This is the initial release of the Packet Purgatory Skillet. 
+This is the initial release of the Packet Purgatory Skillet. Huge shout-out to Mitch Densley for helping with the logic and workflow of this skillet.
 
 #### Purpose:
-This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x NGFW and onward by detecting and quarantine a host that is actively communicating to C2. This would closely mimick a customer environment. It will auto-tag the host into a dynamic address group and isolate them in a security rule that is set to deny. 
+This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x NGFW and onward by detecting and quarantine a host that is actively communicating to C2. This would closely mimic a customer environment by using an internal DNS server. It will auto-tag the host into a dynamic address group and isolate them in a security rule that is set to deny __without__ impacting and sinkholing the internal DNS server. For an in depth review on the DNS Sinkhole feature please refer to the Palo Alto Networks Live Community: [Learning Happy Hour Episode 13](https://youtu.be/FUFtEEMEE00).
 
 
 #### Requirements and Dependencies:
@@ -10,12 +10,47 @@ This demo is based off of resources available in the SE LiAB v2.x. You will need
 * msft-esm-dc (Internal DNS server and UID Server)
 * msft-victim-7 (Query all the bad thingz)
 * pan-panos-vm50
+       * Must have Anti-Spyware security profile already configured with DNS Signature and Policies set to *sinkhole* this will be referenced during Step-1 of the provisioning.
+       * *(Optional)* If you would like a prettier URL Override Page you will need to import *url-override-text.txt* from this repository into your NGFW. If you do not choose to import the custom override page the default override page will be used.
 
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
 
 
-#### Walkthrough:
-Import this into Panhandler and you just SEND IT! Panhandler will push these configuration items to the specified environment(s) within Panhandler. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
+#### How to _SEND IT_:
+First step is to import this repository into Panhandler. Panhandler will push the configuration items to the specified environment. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
+
+#####[Step-1] - Quarantine
+1. Fill out the required fields and hit "Submit"
+       * Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
+2. Verify the configurations have been pushed to the NGFW - you should now see:
+       * 2-new security rules at the top of the policy
+       * A log forwarding profile
+       * A dynamic address group (DAG) and confirm this is empty
+3. On the msft-victim-7:
+       * Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
+       * Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
+       * You should see the NGFW answering the request with *sinkhole.paloaltonetworks.com*. The IP address will change over time. This is the expected behavior to avoid being blacklisted.
+4. On the NGFW
+       * Check the dyanmic address group in the NGFW to see if the host has been populated
+       * *back on the msft-victim-7:* Open an Incognito browser session and try to surf around (at this point the host should be quarantined)
+       * Check the traffic logs to verify the host is indeed in packet purgatory
+
+__Step-1 of the Demo is Now Complete__
+
+#####[Step-2] - Override
+1. Fill out the required fields and hit "Submit"
+       * Remember when I said to take note of the DAG name?!
+2. Verify the configurations have been pushed to the NGFW - you should now see:
+       * 1-new security rules at the top of the policy
+       * Another log forwarding profile added
+       * A URL Filtering security profile with all categories listed under *Override Categories*
+3. On the poor, lonely, isolated msft-victim-7:
+       * Open an Incognito browser session and attempt to browse a website
+       * You should now see the override page (the password is the default password for the lab - if you forget it's also in the script :-))
+
+Huzzah! The host has been rescued!
+__This Concludes the Demo__   
+
 
 ## Support Policy
 The code and templates in the repo are released under an as-is, best effort,
