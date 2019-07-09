@@ -10,8 +10,8 @@ This demo is based off of resources available in the SE LiAB v2.x. You will need
 * msft-esm-dc (Internal DNS server and UID Server)
 * msft-victim-7 (Query all the bad thingz)
 * pan-panos-vm50
-       * Must have Anti-Spyware security profile already configured with DNS Signature and Policies set to *sinkhole* this will be referenced during Step-1 of the provisioning.
-       * *(Optional)* If you would like a prettier URL Override Page you will need to import *url-override-text.txt* from this repository into your NGFW. If you do not choose to import the custom override page the default override page will be used.
+       - Must have Anti-Spyware security profile already configured with DNS Signature and Policies set to *sinkhole* this will be referenced during Step-1 of the provisioning.
+       - *(Optional)* If you would like a prettier URL Override Page you will need to import *url-override-text.txt* from this repository into your NGFW. If you do not choose to import the custom override page the default override page will be used.
 
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
 
