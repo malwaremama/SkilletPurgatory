@@ -16,7 +16,7 @@ This demo is based off of resources available in the SE LiAB v2.x. You will need
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
 
 
-#### How to _SEND IT_:
+> How to _SEND IT_:
 First step is to import this repository into Panhandler. Panhandler will push the configuration items to the specified environment. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
 
 ###### [Step-1] - Quarantine
