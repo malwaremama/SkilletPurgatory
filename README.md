@@ -21,7 +21,7 @@ First step is to import this repository into Panhandler. Panhandler will push th
 
 ###### [Step-1] - Quarantine
 1. Fill out the required fields and hit "Submit"
-* Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
+ * Take note of the dyanmic address group (DAG) name! This will be carried over into Step-2
 2. Verify the configurations have been pushed to the NGFW - you should now see:
 * 2-new security rules at the top of the policy
 * A log forwarding profile
