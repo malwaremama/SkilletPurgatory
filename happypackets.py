@@ -146,9 +146,10 @@ print(r'''\ Go rescue your host(s) from packet jail!
      ||___||) , (||___||
     /||---||-\_/-||---||\
    / ||--_||_____||_--|| \
-  (_(||)-|SID:31619|-(||)_)
+  (_(||)-|UID: nzuk|-(||)_)
 |"""""""""""""""""""""""""""|
 | "But...but...the e-mail   |
 | said I would get millions |
-|   for aiding a prince!"   |
+| for aiding a prince with  |
+| a wire transfer!"         |
  """""""""""""""""""""""""""''')
