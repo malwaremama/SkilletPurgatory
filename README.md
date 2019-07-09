@@ -16,7 +16,7 @@ This demo is based off of resources available in the SE LiAB v2.x. You will need
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
 
 
-> How to _SEND IT_:
+#### How to _SEND IT_:
 First step is to import this repository into Panhandler. Panhandler will push the configuration items to the specified environment. Panorama is not required as the skillet config is pushed directly to the PA-VM. The Logs, however, are configured to be forwarded to Panorama to provide additional log data for any future demos of Panorama.
 
 ###### [Step-1] - Quarantine
@@ -29,11 +29,11 @@ First step is to import this repository into Panhandler. Panhandler will push th
 3. On the msft-victim-7:
        * Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
        * Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
-       ```
-       nslookup <baddomain>
-       ping -t <baddomian>
-       ```
-       * You should see the NGFW answering the request with *sinkhole.paloaltonetworks.com*. The IP address will change over time. This is the expected behavior to avoid being blacklisted.
+```
+nslookup <baddomain>
+ping -t <baddomian>
+```
+* You should see the NGFW answering the request with *sinkhole.paloaltonetworks.com*. The IP address will change over time. This is the expected behavior to avoid being blacklisted.
 4. On the NGFW
        * Check the dyanmic address group in the NGFW to see if the host has been populated
        * *back on the msft-victim-7:* Open an Incognito browser session and try to surf around (at this point the host should be quarantined)
