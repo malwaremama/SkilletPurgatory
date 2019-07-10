@@ -28,7 +28,7 @@ First step is to import this repository into Panhandler. Panhandler will push th
 * A dynamic address group (DAG) and confirm this is empty
 3. On the msft-victim-7:
 * Verify and validate you have Internet connectivity (surf the webz, ping various hosts, etc.)
-* Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (pick one from a trusted source like [SANS Internet Storm Center](https://isc.sans.edu/suspicious_domains.html)
+* Mimic malicious activity by performing 'nslookup' and/or 'ping -t' on a malicious domain (you can find a working list by checking the Anti-Virus Release Notes within the content updates of the NGFW. Search for the header *New Spyware DNS C2 Signatures*)
 ```
 nslookup <baddomain>
 ping -t <baddomian>
