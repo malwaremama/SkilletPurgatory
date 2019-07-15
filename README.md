@@ -6,7 +6,7 @@ This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x NGFW and
 
 
 #### Requirements and Dependencies:
-This demo is based off of resources available in the SE LiAB v2.x. You will need these host VM's up and running in order to execute the demo:
+This demo is based off of the resources available in the SE LiAB v2.x. You will need these host VM's up and running in order to execute the demo:
 * msft-esm-dc (Internal DNS server and UID Server)
 * msft-victim-7 (Query all the bad thingz)
 * pan-panos-vm50
