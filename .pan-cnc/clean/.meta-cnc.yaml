@@ -27,14 +27,14 @@ labels:
 # type_hint defines the form field used by panhandler
 # type_hints can be text, ip_address, or dropdown
 variables:
-  - name: firewall
+  - name: TARGET_IP
     description: IP address or FQDN or the NGFW
     default: 192.168.55.10
     type_hint: IP or FQDN
-  - name: username
+  - name: TARGET_USERNAME
     description: NGFW Username
     type_hint: text
-  - name: password
+  - name: TARGET_PASSWORD
     description: NGFW Password
     type_hint: The password to the NGFW
   - name: url_forwarding
