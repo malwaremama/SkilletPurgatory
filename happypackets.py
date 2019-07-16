@@ -26,17 +26,17 @@ import xml.etree.ElementTree as ET
 
 #Arguments passed from user input from meta-cnc file
 parser = argparse.ArgumentParser(description='Get meta-cnc Params')
-parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
-parser.add_argument("-u", "--username", help="Admin user for NGFW", required=True)
-parser.add_argument("-p", "--password", help="Password for NGFW", required=True)
+parser.add_argument("-f", "--TARGET_IP", help="IP address of the firewall", type=str)
+parser.add_argument("-u", "--TARGET_USERNAME", help="Admin user for NGFW", type=str)
+parser.add_argument("-p", "--TARGET_PASSWORD", help="Password for NGFW", type=str)
 parser.add_argument("-l", "--url_forwarding", help="Log Forwarding Profile name", required=True)
 parser.add_argument("-a", "--url_profile", help="URL Profile name for new security group", required=True)
 parser.add_argument("-d", "--DAG", help="Dynamic Address Group name from Step-1", required=True)
 args = parser.parse_args()
 
-fwHost = args.firewall
-uName = args.username
-pWord = args.password
+fwHost = args.TARGET_IP
+uName = args.TARGET_USERNAME
+pWord = args.TARGET_PASSWORD
 urlLogProfile = args.url_forwarding
 urlProfile = args.url_profile
 dag = args.DAG
