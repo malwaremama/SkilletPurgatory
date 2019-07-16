@@ -26,26 +26,18 @@ import xml.etree.ElementTree as ET
 
 #Arguments passed from user input from meta-cnc file
 parser = argparse.ArgumentParser(description='Get meta-cnc Params')
-parser.add_argument("-f", "--firewall", help="IP address of the firewall", required=True)
-parser.add_argument("-u", "--username", help="Username on NGFW with permission to commit", required=True)
-parser.add_argument("-p", "--password", help="Firewall API Key", required=True)
+parser.add_argument("-f", "--TARGET_IP", help="IP address of the firewall", type=str)
+parser.add_argument("-u", "--TARGET_USERNAME", help="Username on NGFW with permission to commit", type=str)
+parser.add_argument("-p", "--TARGET_PASSWORD", help="NGFW password", type=str)
 parser.add_argument("-l", "--log_forwarding", help="Log Forwarding Profile name", required=True)
 parser.add_argument("-d", "--DAG", help="Dynamic Address Group name", required=True)
 args = parser.parse_args()
 
-fwHost = args.firewall
-uName = args.username
-pWord = args.password
+fwHost = args.TARGET_IP
+uName = args.TARGET_USERNAME
+pWord = args.TARGET_PASSWORD
 lfProfile = args.log_forwarding
 dag = args.DAG
-
-
-fwHost = input ("Firewall IP: ")
-uName = input ("Username: ")
-pWord = input ("Password: ")
-lfProfile = input ("Log Forwarding Profile Name: ")
-dag = input ("Dyanmic Address Group Name: ")
-
 
 # Generate API key
 call = "https://%s/api/?type=keygen&user=%s&password=%s" % (fwHost,uName,pWord)
