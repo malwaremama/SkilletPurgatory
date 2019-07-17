@@ -46,6 +46,7 @@ variables:
     type_hint: text
   - name: url_custom
     description: Choose whether you want the default or a custom URL Override page to be displayed on the host
+    default: Default URL Override Page
     type_hint: dropdown
     dd_list:
       - key: Custom URL Override Page
