@@ -44,6 +44,14 @@ variables:
     description: Provide a name for the URL Filtering security profile
     default: UNQuarantine
     type_hint: text
+  - name: url_custom
+    description: Choose whether you want the default or a custom URL Override page to be displayed on the host
+    type_hint: dropdown
+    dd_list:
+      - key: Custom URL Override Page
+        value: custom
+      - key: Default URL Override Page
+        value: default
   - name: DAG
     description: Name of the Dynamic Address Group for the infected hosts used in Step-1
     default: QuarantinedHosts
