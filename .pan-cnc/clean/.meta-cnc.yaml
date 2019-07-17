@@ -40,7 +40,7 @@ variables:
   - name: url_forwarding
     description: Name of Log Forwarding Profile to be created to untag hosts
     default: LFP-URL
-  - name: urul_profile
+  - name: url_profile
     description: Provide a name for the URL Filtering security profile
     default: UNQuarantine
     type_hint: text
