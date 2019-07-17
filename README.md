@@ -11,7 +11,7 @@ This demo is based off of the resources available in the SE LiAB v2.x. You will 
 * msft-victim-7 (Query all the bad thingz)
 * pan-panos-vm50
   * Must have the [Home Skillet](https://github.com/PaloAltoNetworks/HomeSkillet.git) pre-loaded
-  * *(Optional Step)* If you would like a prettier URL Override Page you will need to import *url-override.html* from this repository into your NGFW. If you do not choose to import the custom override page the default override page will be used.
+  * *(Optional)* There is a custom URL Override Page that is available to select during the provisioning of this skillet
 
 It is assumed that you have all the appropriate content updates already installed for the PA-VM as well as active subscriptions for Threat Prevention and URL Filtering (DNS Subscription is optional).
 
@@ -42,6 +42,7 @@ ping -t <baddomian>
 __Step-1 of the Demo is Now Complete__
 
 ###### [Step-2] - Override
+**You should not proceed with this step until Step-1 has loaded succesfully and you were able to execute the demo**
 1. Fill out the required fields and hit "Submit"
 * Remember when I said to take note of the DAG name?!
 2. Verify the configurations have been pushed to the NGFW - you should now see:
