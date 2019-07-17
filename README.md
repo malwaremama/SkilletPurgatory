@@ -2,7 +2,7 @@
 This is the initial release of the Packet Purgatory Skillet. Huge shout-out to Mitch Densley for helping with the logic and workflow of this skillet.
 
 #### Purpose:
-This skillet can be used to demo the auto-tagging feature in PAN-OS 8.x NGFW and onward by detecting and quarantine a host that is actively communicating to C2. This would closely mimic a customer environment by using an internal DNS server. It will auto-tag the host into a dynamic address group and isolate them in a security rule that is set to deny __without__ impacting and sinkholing the internal DNS server. For an in depth review on the DNS Sinkhole feature please refer to the Palo Alto Networks Live Community: [Learning Happy Hour Episode 13](https://youtu.be/FUFtEEMEE00).
+This skillet can be used to demo the auto-tagging feature in PAN-OS 9.x NGFW and onward by detecting and quarantine a host that is actively communicating to C2. This would closely mimic a customer environment by using an internal DNS server. It will auto-tag the host into a dynamic address group and isolate them in a security rule that is set to deny __without__ impacting and sinkholing the internal DNS server. For an in depth review on the DNS Sinkhole feature please refer to the Palo Alto Networks Live Community: [Learning Happy Hour Episode 13](https://youtu.be/FUFtEEMEE00).
 
 
 #### Requirements and Dependencies:
