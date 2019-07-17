@@ -206,7 +206,7 @@ def main ():
     apiKey = get_key(fwHost, uName, pWord)
 
     #import the URL response page
-    if urlCustom = custom:
+    if urlCustom == 'custom':
         import_urlresponse(fwHost, apiKey, filename)
         print('Importing Custom URL Filtering Override Page')
 
