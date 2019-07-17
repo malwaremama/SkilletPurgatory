@@ -29,7 +29,6 @@ labels:
 variables:
   - name: TARGET_IP
     description: IP address or FQDN or the NGFW
-    default: 192.168.55.10
     type_hint: IP or FQDN
   - name: TARGET_USERNAME
     description: NGFW Username
