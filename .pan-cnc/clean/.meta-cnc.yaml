@@ -1,10 +1,10 @@
 # skillet preamble information used by panhandler
 # ---------------------------------------------------------------------
 # unique snippet name
-name: UNPacketPurgatory
+name: UNSkilletPurgatory
 # label used for menu selection
-label: Auto-tagging & DNS Sinkhole [STEP-2] - Override
-description: This skillet will notify the user of malicious activity detected on their machine and provide an override to be self-service. You will need to import the URL Filtering Continue and Override Page that's located within the GitHub repository.
+label: IronBox Auto-tagging & DNS Sinkhole [STEP-2] - Override
+description: This skillet will notify the user of malicious activity detected on their machine and provide an override to be self-service. This skillet is designed to work with the IronBox Lab in a Box IronSkillet.
 
 # type of device configuration
 # common types are panorama, panos, and template
@@ -16,7 +16,7 @@ extends:
 # grouping of like snippets for dynamic menu creation in panhandler
 labels:
   collection:
-    - AutoTag Sinkhole Demo
+    - IronBox Sinkhole Demo
 
 # ---------------------------------------------------------------------
 # end of preamble section

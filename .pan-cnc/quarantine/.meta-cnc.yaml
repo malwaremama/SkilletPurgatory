@@ -1,10 +1,10 @@
 # skillet preamble information used by panhandler
 # ---------------------------------------------------------------------
 # unique snippet name
-name: PacketPurgatory
+name: SkilletPurgatory
 # label used for menu selection
-label: Auto-tagging & DNS Sinkhole [STEP-1] - Quarantine
-description: This skillet will autotag and isolate host(s) from the network that are identified as communicating with malicious domains
+label: Iron Box Auto-tagging & DNS Sinkhole [STEP-1] - Quarantine
+description: This skillet will autotag and isolate host(s) from the network that are identified as communicating with malicious domains. This skillet is designed to work with the IronBox edition of IronSkillet.
 
 # type of device configuration
 # common types are panorama, panos, and template
@@ -16,7 +16,7 @@ extends:
 # grouping of like snippets for dynamic menu creation in panhandler
 labels:
   collection:
-    - AutoTag Sinkhole Demo
+    - IronBox AutoTag Sinkhole Demo
 
 # ---------------------------------------------------------------------
 # end of preamble section
