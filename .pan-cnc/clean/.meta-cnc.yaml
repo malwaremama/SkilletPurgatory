@@ -16,7 +16,7 @@ extends:
 # grouping of like snippets for dynamic menu creation in panhandler
 labels:
   collection:
-    - IronBox Sinkhole Demo
+    - IronBox AutoTag Sinkhole Demo
 
 # ---------------------------------------------------------------------
 # end of preamble section
